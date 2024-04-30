@@ -16,7 +16,7 @@ public class TestMySQL {
         System.out.println(almacenEmpleados.updateEmpleado(empleado));
         System.out.println(almacenEmpleados.getEmpleados());
         System.out.println(almacenEmpleados.deleteEmpleado("4X"));
-        Empleado empleado1 = new Empleado(1,"6X","Juan","Aray Jesús","46888","empleados@empleado.es",new Date(2000),"jefes","su casa,55");
+        Empleado empleado1 = new Empleado(1,"7X","Jesús","Aray Jesús","46888","empleados@empleado.es",new Date(2000,10,5),"jefes","su casa,55");
         System.out.println(almacenEmpleados.addEmpleado(empleado1));
         System.out.println(almacenEmpleados.getEmpleados());
 
