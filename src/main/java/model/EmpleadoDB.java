@@ -3,10 +3,7 @@ package model;
 import connection.MyDataSource;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,15 +121,15 @@ public class EmpleadoDB implements AlmacenDatosDB {
         ResultSet resultSet = statement.executeQuery("SELECT * FROM EMPLEADO WHERE DNI = '"+dni+"'")){
             resultSet.next();
             empleado = new Empleado(
-                    resultSet.getInt("idEmpleado"),
-                    resultSet.getString("DNI"),
-                    resultSet.getString("nombre"),
-                    resultSet.getString("apellidos"),
-                    resultSet.getString("CP"),
-                    resultSet.getString("email"),
-                    resultSet.getDate("fechaNac"),
-                    resultSet.getString("cargo"),
-                    resultSet.getString("domicilio"));
+                    resultSet.getInt(1),
+                    resultSet.getString(2),
+                    resultSet.getString(3),
+                    resultSet.getString(4),
+                    resultSet.getString(5),
+                    resultSet.getString(6),
+                    resultSet.getDate(7),
+                    resultSet.getString(8),
+                    resultSet.getString(11));
 
         } catch (SQLException e){
             e.printStackTrace();
@@ -143,6 +140,49 @@ public class EmpleadoDB implements AlmacenDatosDB {
 
     @Override
     public boolean authenticate(String login, String passwd) {
-        return false;
+        boolean autenticado = false;
+        DataSource dataSource = MyDataSource.getMySQLDataSource();
+        try(Connection connection= dataSource.getConnection();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(" SELECT COUNT(*) " +
+                "FROM EMPLEADO WHERE DNI = '"+login+"' AND PASSWORD = '"+passwd+"'")){
+            resultSet.next();
+            if(resultSet.getInt(1) > 0)
+                autenticado = true;
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return autenticado;
+    }
+
+    @Override
+    public List<Empleado> getEmpleadosPorCargo(String cargo) {
+        List<Empleado> empleados = new ArrayList<>();
+        DataSource dataSource = MyDataSource.getMySQLDataSource();
+        String query = "SELECT * FROM EMPLEADO WHERE CARGO = ?";
+        try(Connection connection= dataSource.getConnection();
+        PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1,cargo);
+             ResultSet resultSet = ps.executeQuery();
+
+                Empleado empleado;
+                while(resultSet.next()){
+                    empleado = new Empleado(
+                            resultSet.getInt("idEmpleado"),
+                            resultSet.getString("DNI"),
+                            resultSet.getString("nombre"),
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("CP"),
+                            resultSet.getString("email"),
+                            resultSet.getDate("fechaNac"),
+                            resultSet.getString("cargo"),
+                            resultSet.getString("domicilio"));
+                    empleados.add(empleado);
+                }
+
+            } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return empleados;
     }
 }
