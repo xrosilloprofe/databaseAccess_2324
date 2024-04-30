@@ -1,3 +1,5 @@
+package model;
+
 import java.sql.Date;
 
 public class Empleado {
@@ -87,9 +89,13 @@ public class Empleado {
         this.idEmpleado = idEmpleado;
     }
 
+    public String getDNI() {
+        return DNI;
+    }
+
     @Override
     public String toString() {
-        return "Empleado{" +
+        return "model.Empleado{" +
                 "idEmpleado=" + idEmpleado +
                 ", DNI='" + DNI + '\'' +
                 ", nombre='" + nombre + '\'' +
