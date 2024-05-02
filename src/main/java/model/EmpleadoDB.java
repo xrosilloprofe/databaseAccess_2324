@@ -185,21 +185,43 @@ public class EmpleadoDB implements AlmacenDatosDB {
         return empleado;
     }
 
+//    @Override
+//    public boolean authenticate(String login, String passwd) {
+//        boolean autenticado = false;
+//        DataSource dataSource = MyDataSource.getMySQLDataSource();
+//        String query = "SELECT COUNT(*) FROM EMPLEADO WHERE " +
+//                "DNI = ? AND PASSWORD = ?";
+//        try(Connection connection= dataSource.getConnection();
+//            PreparedStatement ps = connection.prepareStatement(query)
+//        ){
+//            ps.setString(1,login);
+//            ps.setString(2,passwd);
+//            ResultSet resultSet = ps.executeQuery();
+//            resultSet.next();
+//            if(resultSet.getInt(1)>0)
+//                autenticado=true;
+//        } catch (SQLException e){
+//            e.printStackTrace();
+//        }
+//        return autenticado;
+//    }
+
     @Override
     public boolean authenticate(String login, String passwd) {
         boolean autenticado = false;
         DataSource dataSource = MyDataSource.getMySQLDataSource();
-        String query = "SELECT COUNT(*) FROM EMPLEADO WHERE " +
-                "DNI = ? AND PASSWORD = ?";
+        String query = "{ ? = call autentificar(?,?) }";
+
         try(Connection connection= dataSource.getConnection();
-            PreparedStatement ps = connection.prepareStatement(query)
+            CallableStatement cs = connection.prepareCall(query);
         ){
-            ps.setString(1,login);
-            ps.setString(2,passwd);
-            ResultSet resultSet = ps.executeQuery();
+            cs.setString(2,login);
+            cs.setString(3,passwd);
+            ResultSet resultSet = cs.executeQuery();
             resultSet.next();
             if(resultSet.getInt(1)>0)
                 autenticado=true;
+
         } catch (SQLException e){
             e.printStackTrace();
         }
