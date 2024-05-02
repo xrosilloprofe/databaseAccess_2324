@@ -111,14 +111,61 @@ public class EmpleadoDB implements AlmacenDatosDB {
         return empleado;
     }
 
+//    @Override
+//    public Empleado getEmpleado(String dni) {
+//        DataSource dataSource= MyDataSource.getMySQLDataSource();
+//        Empleado empleado = null;
+//
+//        try(Connection connection = dataSource.getConnection();
+//        Statement statement= connection.createStatement();
+//        ResultSet resultSet = statement.executeQuery("SELECT * FROM EMPLEADO WHERE DNI = '"+dni+"'")){
+//            resultSet.next();
+//            empleado = new Empleado(
+//                    resultSet.getInt(1),
+//                    resultSet.getString(2),
+//                    resultSet.getString(3),
+//                    resultSet.getString(4),
+//                    resultSet.getString(5),
+//                    resultSet.getString(6),
+//                    resultSet.getDate(7),
+//                    resultSet.getString(8),
+//                    resultSet.getString(11));
+//
+//        } catch (SQLException e){
+//            e.printStackTrace();
+//        }
+//
+//        return empleado;
+//    }
+
+//    @Override
+//    public boolean authenticate(String login, String passwd) {
+//        boolean autenticado = false;
+//        DataSource dataSource = MyDataSource.getMySQLDataSource();
+//        try(Connection connection= dataSource.getConnection();
+//        Statement statement = connection.createStatement();
+//        ResultSet resultSet = statement.executeQuery(" SELECT COUNT(*) " +
+//                "FROM EMPLEADO WHERE DNI = '"+login+"' AND PASSWORD = '"+passwd+"'")){
+//            resultSet.next();
+//            if(resultSet.getInt(1) > 0)
+//                autenticado = true;
+//        } catch (SQLException e){
+//            e.printStackTrace();
+//        }
+//        return autenticado;
+//    }
+
     @Override
     public Empleado getEmpleado(String dni) {
         DataSource dataSource= MyDataSource.getMySQLDataSource();
         Empleado empleado = null;
+        String query = "SELECT * FROM EMPLEADO WHERE DNI = ?";
 
         try(Connection connection = dataSource.getConnection();
-        Statement statement= connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM EMPLEADO WHERE DNI = '"+dni+"'")){
+            PreparedStatement ps= connection.prepareStatement(query)
+            ){
+            ps.setString(1,dni);
+            ResultSet resultSet = ps.executeQuery();
             resultSet.next();
             empleado = new Empleado(
                     resultSet.getInt(1),
@@ -137,23 +184,6 @@ public class EmpleadoDB implements AlmacenDatosDB {
 
         return empleado;
     }
-
-//    @Override
-//    public boolean authenticate(String login, String passwd) {
-//        boolean autenticado = false;
-//        DataSource dataSource = MyDataSource.getMySQLDataSource();
-//        try(Connection connection= dataSource.getConnection();
-//        Statement statement = connection.createStatement();
-//        ResultSet resultSet = statement.executeQuery(" SELECT COUNT(*) " +
-//                "FROM EMPLEADO WHERE DNI = '"+login+"' AND PASSWORD = '"+passwd+"'")){
-//            resultSet.next();
-//            if(resultSet.getInt(1) > 0)
-//                autenticado = true;
-//        } catch (SQLException e){
-//            e.printStackTrace();
-//        }
-//        return autenticado;
-//    }
 
     @Override
     public boolean authenticate(String login, String passwd) {
