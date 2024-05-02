@@ -16,8 +16,8 @@ public class TestMySQL {
 //        System.out.println(almacenEmpleados.updateEmpleado(empleado));
 //        System.out.println(almacenEmpleados.getEmpleados());
 //        System.out.println(almacenEmpleados.deleteEmpleado("4X"));
-//        Empleado empleado1 = new Empleado(1,"8X","Jesús","Aray Jesús","46888","empleados@empleado.es",new Date(2000,10,5),"jefes","su casa,55");
-//        System.out.println(almacenEmpleados.addEmpleado(empleado1));
+        Empleado empleado1 = new Empleado(1,"88X","Jesús","Aray Jesús","46888","empleados@empleado.es",new Date(104,4,29),"jefes","su casa,55");
+        System.out.println(almacenEmpleados.addEmpleado(empleado1));
         System.out.println(almacenEmpleados.authenticate("8X","1111"));
         System.out.println(almacenEmpleados.authenticate("8X","1' OR PASSWORD != '1"));
         System.out.println(almacenEmpleados.getEmpleadosPorCargo("jefes"));
