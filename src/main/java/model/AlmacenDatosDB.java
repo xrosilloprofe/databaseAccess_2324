@@ -10,5 +10,6 @@ public interface AlmacenDatosDB {
     Empleado getEmpleado(String dni);
     boolean authenticate (String login, String passwd);
     List<Empleado> getEmpleadosPorCargo(String cargo);
+    int addEmpleadoProcedure(Empleado empleado);
 
 }

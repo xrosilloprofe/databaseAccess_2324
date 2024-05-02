@@ -228,34 +228,87 @@ public class EmpleadoDB implements AlmacenDatosDB {
         return autenticado;
     }
 
+//    @Override
+//    public List<Empleado> getEmpleadosPorCargo(String cargo) {
+//        List<Empleado> empleados = new ArrayList<>();
+//        DataSource dataSource = MyDataSource.getMySQLDataSource();
+//        String query = "SELECT * FROM EMPLEADO WHERE CARGO = ?";
+//        try(Connection connection= dataSource.getConnection();
+//        PreparedStatement ps = connection.prepareStatement(query)){
+//            ps.setString(1,cargo);
+//             ResultSet resultSet = ps.executeQuery();
+//
+//                Empleado empleado;
+//                while(resultSet.next()){
+//                    empleado = new Empleado(
+//                            resultSet.getInt("idEmpleado"),
+//                            resultSet.getString("DNI"),
+//                            resultSet.getString("nombre"),
+//                            resultSet.getString("apellidos"),
+//                            resultSet.getString("CP"),
+//                            resultSet.getString("email"),
+//                            resultSet.getDate("fechaNac"),
+//                            resultSet.getString("cargo"),
+//                            resultSet.getString("domicilio"));
+//                    empleados.add(empleado);
+//                }
+//
+//            } catch (SQLException e){
+//            e.printStackTrace();
+//        }
+//        return empleados;
+//    }
+@Override
+public List<Empleado> getEmpleadosPorCargo(String cargo) {
+    List<Empleado> empleados = new ArrayList<>();
+    DataSource dataSource = MyDataSource.getMySQLDataSource();
+    String query = "call empleadoPorCargo(?)";
+    try(Connection connection= dataSource.getConnection();
+        CallableStatement cs = connection.prepareCall(query)){
+        cs.setString(1,cargo);
+        ResultSet resultSet = cs.executeQuery();
+        Empleado empleado;
+        while(resultSet.next()){
+            empleado = new Empleado(
+                    resultSet.getInt("idEmpleado"),
+                    resultSet.getString("DNI"),
+                    resultSet.getString("nombre"),
+                    resultSet.getString("apellidos"),
+                    resultSet.getString("CP"),
+                    resultSet.getString("email"),
+                    resultSet.getDate("fechaNac"),
+                    resultSet.getString("cargo"),
+                    resultSet.getString("domicilio"));
+            empleados.add(empleado);
+        }
+
+    } catch (SQLException e){
+        e.printStackTrace();
+    }
+    return empleados;
+}
+
     @Override
-    public List<Empleado> getEmpleadosPorCargo(String cargo) {
-        List<Empleado> empleados = new ArrayList<>();
-        DataSource dataSource = MyDataSource.getMySQLDataSource();
-        String query = "SELECT * FROM EMPLEADO WHERE CARGO = ?";
-        try(Connection connection= dataSource.getConnection();
-        PreparedStatement ps = connection.prepareStatement(query)){
-            ps.setString(1,cargo);
-             ResultSet resultSet = ps.executeQuery();
+    public int addEmpleadoProcedure(Empleado empleado) {
+        DataSource ds = MyDataSource.getMySQLDataSource();
+        String query = "{call addEmpleado(?,?,?,?,?,?,?,?,?)}";
 
-                Empleado empleado;
-                while(resultSet.next()){
-                    empleado = new Empleado(
-                            resultSet.getInt("idEmpleado"),
-                            resultSet.getString("DNI"),
-                            resultSet.getString("nombre"),
-                            resultSet.getString("apellidos"),
-                            resultSet.getString("CP"),
-                            resultSet.getString("email"),
-                            resultSet.getDate("fechaNac"),
-                            resultSet.getString("cargo"),
-                            resultSet.getString("domicilio"));
-                    empleados.add(empleado);
-                }
+        try(Connection connection = ds.getConnection();
+        CallableStatement cs = connection.prepareCall(query)){
+            cs.setString(1, empleado.getDNI());
+            cs.setString(2, empleado.getNombre());
+            cs.setString(3, empleado.getApellidos());
+            cs.setString(4, empleado.getCP());
+            cs.setString(5, empleado.getEmail());
+            cs.setDate(6,empleado.getFechaNac());
+            cs.setString(7, empleado.getCargo());
+            cs.setString(8, empleado.getDomicilio());
+            cs.executeUpdate();
 
-            } catch (SQLException e){
+        } catch (SQLException e){
             e.printStackTrace();
         }
-        return empleados;
+
+        return 0;
     }
 }
