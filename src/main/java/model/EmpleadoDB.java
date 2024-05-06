@@ -292,6 +292,7 @@ public List<Empleado> getEmpleadosPorCargo(String cargo) {
     public int addEmpleadoProcedure(Empleado empleado) {
         DataSource ds = MyDataSource.getMySQLDataSource();
         String query = "{call addEmpleado(?,?,?,?,?,?,?,?,?)}";
+        int resultado=0;
 
         try(Connection connection = ds.getConnection();
         CallableStatement cs = connection.prepareCall(query)){
@@ -303,12 +304,14 @@ public List<Empleado> getEmpleadosPorCargo(String cargo) {
             cs.setDate(6,empleado.getFechaNac());
             cs.setString(7, empleado.getCargo());
             cs.setString(8, empleado.getDomicilio());
+            cs.registerOutParameter(9,Types.INTEGER); //Recomendable
             cs.executeUpdate();
+            resultado = cs.getInt(9);
 
         } catch (SQLException e){
             e.printStackTrace();
         }
 
-        return 0;
+        return resultado;
     }
 }
